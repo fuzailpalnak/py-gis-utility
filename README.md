@@ -1,1 +1,1 @@
-# pygis-math
+# pygis-helpers
