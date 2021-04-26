@@ -210,10 +210,52 @@ def compute_perpendicular_point_to_line_segment(
     line_segment: np.ndarray, distance_from_the_line: int = 10
 ):
     """
+    Get perpendicular point with reference to start and end point of the segment
 
-    :param line_segment:
-    :param distance_from_the_line:
-    :return:
+    :param line_segment: array of shape [number_of_line_segments, 2, 2] or [2, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [2, 2] are [
+                                                [start_line_segment_x, start_line_segment_y],
+                                                [end_line_segment_x,   end_line_segment_y]
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_line_segments, 2, 2] are [
+                                                                        [
+                                                                        [start_line_segment_1_x, start_line_segment_1_y],
+                                                                        [end_line_segment_1_x,   end_line_segment_1_y]
+                                                                        ],
+                                                                        [
+                                                                        [start_line_segment_2_x, start_line_segment_2_y],
+                                                                        [end_line_segment_2_x,   end_line_segment_2_y]
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [start_line_segment_n_x, start_line_segment_n_y],
+                                                                        [end_line_segment_n_x,   end_line_segment_n_y]
+                                                                        ],
+                                                                    ]
+    :param distance_from_the_line: how far the new point to create from the reference
+    :return:(perpendicular points with reference to start, perpendicular points with reference to end)
+            -
+                return is of shape [number_of_segments, 2, 2]
+
+                    [A_n]                          [C_n]
+                    |     line_segment_with       |
+                    |-----------------------------|
+                    |     index value 'n'         |
+                    [B_n]                         [D_n]
+
+                to get points -
+
+                    A_n - perpendicular_with_start[segment_index_value_n, 0, :]
+                    B_n - perpendicular_with_start[segment_index_value_n, 1, :]
+                    C_n - perpendicular_with_end[segment_index_value_n, 0, :]
+                    D_n - perpendicular_with_end[segment_index_value_n, 1, :]
+
     """
 
     assert (
