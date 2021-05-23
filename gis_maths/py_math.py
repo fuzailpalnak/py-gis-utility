@@ -1,8 +1,19 @@
 import math
-from typing import Tuple
 
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
+
+
+def angle_between_vector(v1: tuple, v2: tuple):
+    """
+    two vectors have either the same direction -  https://stackoverflow.com/a/13849249/71522
+    :param v1:
+    :param v2:
+    :return:
+    """
+    v1_u = unit_vector(v1)
+    v2_u = unit_vector(v2)
+    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
 
 
 def vector(p1: np.ndarray, p2: np.ndarray) -> np.ndarray:
@@ -409,34 +420,57 @@ def perpendicular_point_to_line_segment(
 
 
 def get_end_coordinate(
-    start: tuple, angle_in_degree: float, distance: float
-) -> Tuple[float, float]:
+    points: np.ndarray, angle_in_degree: float, distance: float
+) -> np.ndarray:
     """
     # https://math.stackexchange.com/questions/39390/determining-end-coordinates-of-line-with-the-specified-length-and-angle
 
-    :param start:
+    :param points:
     :param angle_in_degree:
     :param distance:
     :return:
     """
-    x2 = start[0] + (distance * math.cos(angle_in_degree))
-    y2 = start[1] + (distance * math.sin(angle_in_degree))
+    assert (
+        type(points) is np.ndarray
+        and type(distance) is float
+        and type(angle_in_degree) is float
+    ), (
+        "Expected to have input type ['np.ndarray', 'float', 'float']" "got %s, %s",
+        (type(points), type(distance), type(angle_in_degree)),
+    )
+
+    assert (points.ndim == 2 and (points.shape[-2], points.shape[-1]) == (1, 2)) or (
+        points.ndim == 3 and (points.shape[-2], points.shape[-1]) == (1, 2)
+    ), (
+        "Expected line segment coordinates to be either '[n_line_segments, 1, 2]' or '[1, 2]'"
+        "got %s, %s",
+        (
+            points.ndim,
+            points.shape,
+        ),
+    )
+
+    assert type(distance) is float and distance >= 0, (
+        "Expected distance_from_the_line to be of type 'float' and 'non zero'"
+        "got %s, %s",
+        (
+            type(distance),
+            distance,
+        ),
+    )
+    if points.ndim == 2:
+        points = points[np.newaxis, :, :]
+
+    x2 = points[:, :, 0:1] + (distance * math.cos(angle_in_degree))
+    y2 = points[:, :, 1:2] + (distance * math.sin(angle_in_degree))
     return x2, y2
 
 
-def get_point_after_certain_distance(
+def get_points_after_same_distance_for_all_line_segments(
     line_segments: np.ndarray, distance_from_start: float
 ) -> np.ndarray:
-    """
-    https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
-    https://math.stackexchange.com/a/426810
-
-    :param distance_from_start:
-    :param line_segments:
-    :return:
-    """
     assert type(line_segments) is np.ndarray and type(distance_from_start) is float, (
-        "Expected to have input type ['np.ndarray', 'int']" "got %s, %s",
+        "Expected to have input type ['np.ndarray', 'float']" "got %s, %s",
         (type(line_segments), type(distance_from_start)),
     )
 
@@ -463,8 +497,92 @@ def get_point_after_certain_distance(
             distance_from_start,
         ),
     )
+
     if line_segments.ndim == 2:
         line_segments = line_segments[np.newaxis, :, :]
+
+    common_distance_from_start = (
+        np.ones((line_segments.shape[0], 1, 1)) * distance_from_start
+    )
+
+    return get_point_after_certain_distance(line_segments, common_distance_from_start)
+
+
+def get_points_after_custom_distance_for_every_line_segments(
+    line_segments: np.ndarray, distance_from_start: np.ndarray
+) -> np.ndarray:
+    return get_point_after_certain_distance(line_segments, distance_from_start)
+
+
+def get_point_after_certain_distance(
+    line_segments: np.ndarray, distance_from_start: np.ndarray
+) -> np.ndarray:
+    """
+    https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+    https://math.stackexchange.com/a/426810
+
+    :param distance_from_start:
+    :param line_segments:
+    :return:
+    """
+    assert (
+        type(line_segments) is np.ndarray and type(distance_from_start) is np.ndarray
+    ), (
+        "Expected to have input type ['np.ndarray', 'np.ndarray']" "got %s, %s",
+        (type(line_segments), type(distance_from_start)),
+    )
+
+    assert (
+        line_segments.ndim == 2
+        and (line_segments.shape[-2], line_segments.shape[-1]) == (2, 2)
+    ) or (
+        line_segments.ndim == 3
+        and (line_segments.shape[-2], line_segments.shape[-1]) == (2, 2)
+    ), (
+        "Expected line segment coordinates to be either '[n_line_segments, 2, 2]' or '[2, 2]'"
+        "got %s, %s",
+        (
+            line_segments.ndim,
+            line_segments.shape,
+        ),
+    )
+
+    assert type(distance_from_start) is np.ndarray and np.all(
+        distance_from_start >= 0
+    ), (
+        "Expected distance_from_the_line to be of type 'np.ndarray' and 'non zero'"
+        "got %s, %s",
+        (
+            type(distance_from_start),
+            distance_from_start,
+        ),
+    )
+
+    assert (
+        distance_from_start.ndim == 2
+        and (distance_from_start.shape[-2], distance_from_start.shape[-1]) == (1, 1)
+    ) or (
+        distance_from_start.ndim == 3
+        and (distance_from_start.shape[-2], distance_from_start.shape[-1]) == (1, 1)
+    ), (
+        "Expected line distance_from_start coordinates to be either '[n_line_segments, 1, 1]' or '[1, 1]'"
+        "got %s, %s",
+        (
+            distance_from_start.ndim,
+            distance_from_start.shape,
+        ),
+    )
+
+    assert line_segments.ndim == distance_from_start.ndim, (
+        "Expected input to have same dimension," "got %s, %s",
+        (
+            line_segments.ndim,
+            distance_from_start.ndim,
+        ),
+    )
+    if line_segments.ndim == 2:
+        line_segments = line_segments[np.newaxis, :, :]
+        distance_from_start = distance_from_start[np.newaxis, :, :]
 
     vec = vector(line_segments[:, 1:2, :], line_segments[:, 0:1, :])
     vec_mag = np.concatenate([magnitude(vec, -1)[:, :, np.newaxis]] * 2, axis=-1)
