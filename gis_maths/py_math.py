@@ -1,8 +1,80 @@
+import math
+from typing import Tuple
+
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
 
-def compute_euclidean_between_two_sets(
+def vector(p1: np.ndarray, p2: np.ndarray) -> np.ndarray:
+    """
+
+    :param p1:
+    :param p2:
+    :return:
+    """
+    return np.subtract(p1, p2)
+
+
+def magnitude(vec: np.ndarray, axis=-1) -> np.ndarray:
+    return np.linalg.norm(vec, axis=axis)
+
+
+def unit_vector(vec: np.ndarray, axis=-1) -> np.ndarray:
+    """
+
+    :param axis:
+    :param vec:
+    :return: unit vector
+    """
+    return np.divide(
+        vec, np.concatenate([magnitude(vec, axis)[:, :, np.newaxis]] * 2, axis=axis)
+    )
+
+
+def extract_index(
+    from_input: np.ndarray, value: np.ndarray, along_axis: int = 0
+) -> np.ndarray:
+    """
+
+    :param along_axis:
+    :param from_input:
+    :param value:
+    :return:
+    """
+
+    assert type(from_input) is np.ndarray and type(value) is np.ndarray, (
+        "Expected to have input type 'np.ndarray'" "got %s, %s",
+        (type(from_input), type(value)),
+    )
+    assert from_input.ndim == 3 and (from_input.shape[-2], from_input.shape[-1]) == (
+        2,
+        2,
+    ), (
+        "Expected from_input coordinates to be either '[n_from_input, 2, 2]'"
+        "got %s, %s",
+        (
+            from_input.ndim,
+            from_input.shape,
+        ),
+    )
+
+    assert 0 <= along_axis <= from_input.ndim, (
+        "Expected along_axis to be in range ['0' and '%s']" "got %s",
+        (from_input.ndim, along_axis),
+    )
+
+    if value.ndim == 2 and from_input.ndim == 3:
+        value = value[np.newaxis, :, :]
+
+    assert from_input.ndim == value.ndim, (
+        "Expected to have same number of dimensions" "got %s, %s",
+        (from_input.ndim, value.ndim),
+    )
+
+    return np.unique(np.where(from_input == value)[along_axis])
+
+
+def euclidean_between_two_sets(
     coordinates_a: np.ndarray, coordinates_b: np.ndarray
 ) -> np.ndarray:
     """
@@ -27,6 +99,12 @@ def compute_euclidean_between_two_sets(
     :param coordinates_b: array of shape [n_coordinates_b, 2]
     :return: array of shape [n_coordinates_a, n_coordinates_b]
     """
+
+    assert type(coordinates_a) is np.ndarray and type(coordinates_b) is np.ndarray, (
+        "Expected to have input type 'np.ndarray'" "got %s, %s",
+        (type(coordinates_a), type(coordinates_b)),
+    )
+
     assert coordinates_b.shape[-1] == 2 and coordinates_b.ndim == 2, (
         "Expected orientation to have shape '[number of points, 2]'" "got %s",
         (coordinates_b.shape,),
@@ -47,7 +125,7 @@ def compute_euclidean_between_two_sets(
     return distances
 
 
-def compute_euclidean_between_self(coordinates_a: np.ndarray) -> np.ndarray:
+def euclidean_between_self(coordinates_a: np.ndarray) -> np.ndarray:
     """
     This function will return set of distances from coordinates_a to coordinates_a
     ex -
@@ -66,6 +144,10 @@ def compute_euclidean_between_self(coordinates_a: np.ndarray) -> np.ndarray:
     :param coordinates_a: array of shape [n_coordinates_a, 2]
     :return: array of shape [n_coordinates_a, n_coordinates_a]
     """
+    assert type(coordinates_a) is np.ndarray, (
+        "Expected to have input type 'np.ndarray'" "got %s",
+        (type(coordinates_a),),
+    )
 
     assert coordinates_a.shape[-1] == 2 and coordinates_a.ndim == 2, (
         "Expected input_coordinates to have shape '[number of points, 2]'" "got %s",
@@ -75,28 +157,7 @@ def compute_euclidean_between_self(coordinates_a: np.ndarray) -> np.ndarray:
     return squareform(pdist(coordinates_a))
 
 
-def get_minimum_in_matrix(input_matrix: np.ndarray, find_minimum_in_axis=1):
-    """
-
-    :param input_matrix:
-    :param find_minimum_in_axis:
-    :return:
-    """
-    assert input_matrix.shape[-1] == 2 and input_matrix.ndim == 2, (
-        "Expected input_coordinates to have shape '[number of points, 2]'" "got %s",
-        (input_matrix.shape,),
-    )
-
-    assert find_minimum_in_axis in [1, 2], (
-        "Expected shortest_distance_axis to be in '[1, 2]'" "got %s",
-        (find_minimum_in_axis,),
-    )
-    minimum = np.argmin(input_matrix, axis=find_minimum_in_axis)
-
-    return minimum, input_matrix[minimum]
-
-
-def compute_perpendicular_distance_from_point_to_line_segment_in_2d(
+def perpendicular_distance_from_point_to_line_segment_in_2d(
     line_segment: np.ndarray, coordinates: np.ndarray
 ) -> np.ndarray:
     """
@@ -144,15 +205,17 @@ def compute_perpendicular_distance_from_point_to_line_segment_in_2d(
             ...
             | distance from line_Segment_n to coordinate[0]    | distance from line_Segment_n to coordinate[1] |
 
-
-
-
     """
 
     # https://stackoverflow.com/a/53176074/7984359
     # https://math.stackexchange.com/questions/1300484/distance-between-line-and-a-point
     # https://www.geeksforgeeks.org/minimum-distance-from-a-point-to-the-line-segment-using-vectors/
     # https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
+
+    assert type(line_segment) is np.ndarray and type(coordinates) is np.ndarray, (
+        "Expected to have input type 'np.ndarray'" "got %s, %s",
+        (type(line_segment), type(coordinates)),
+    )
 
     assert coordinates.ndim == 2 and coordinates.shape[-1] == 2, (
         "Expected coordinates to be '2' dimensional and have shape '[number of point, 2]'"
@@ -206,7 +269,7 @@ def compute_perpendicular_distance_from_point_to_line_segment_in_2d(
     return np.squeeze(np.sqrt(dx ** 2 + dy ** 2), axis=-1)
 
 
-def compute_perpendicular_point_to_line_segment(
+def perpendicular_point_to_line_segment(
     line_segment: np.ndarray, distance_from_the_line: int = 10
 ):
     """
@@ -257,6 +320,10 @@ def compute_perpendicular_point_to_line_segment(
                     D_n - perpendicular_with_end[segment_index_value_n, 1, :]
 
     """
+    assert type(line_segment) is np.ndarray and type(distance_from_the_line) is int, (
+        "Expected to have input type ['np.ndarray', 'int']" "got %s, %s",
+        (type(line_segment), type(distance_from_the_line)),
+    )
 
     assert (
         line_segment.ndim == 2
@@ -340,3 +407,86 @@ def compute_perpendicular_point_to_line_segment(
     )
     return perpendicular_with_start, perpendicular_with_end
 
+
+def get_end_coordinate(
+    start: tuple, angle_in_degree: float, distance: float
+) -> Tuple[float, float]:
+    """
+    # https://math.stackexchange.com/questions/39390/determining-end-coordinates-of-line-with-the-specified-length-and-angle
+
+    :param start:
+    :param angle_in_degree:
+    :param distance:
+    :return:
+    """
+    x2 = start[0] + (distance * math.cos(angle_in_degree))
+    y2 = start[1] + (distance * math.sin(angle_in_degree))
+    return x2, y2
+
+
+def get_point_after_certain_distance(
+    line_segments: np.ndarray, distance_from_start: float
+) -> np.ndarray:
+    """
+    https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
+    https://math.stackexchange.com/a/426810
+
+    :param distance_from_start:
+    :param line_segments:
+    :return:
+    """
+    assert type(line_segments) is np.ndarray and type(distance_from_start) is float, (
+        "Expected to have input type ['np.ndarray', 'int']" "got %s, %s",
+        (type(line_segments), type(distance_from_start)),
+    )
+
+    assert (
+        line_segments.ndim == 2
+        and (line_segments.shape[-2], line_segments.shape[-1]) == (2, 2)
+    ) or (
+        line_segments.ndim == 3
+        and (line_segments.shape[-2], line_segments.shape[-1]) == (2, 2)
+    ), (
+        "Expected line segment coordinates to be either '[n_line_segments, 2, 2]' or '[2, 2]'"
+        "got %s, %s",
+        (
+            line_segments.ndim,
+            line_segments.shape,
+        ),
+    )
+
+    assert type(distance_from_start) is float and distance_from_start >= 0, (
+        "Expected distance_from_the_line to be of type 'float' and 'non zero'"
+        "got %s, %s",
+        (
+            type(distance_from_start),
+            distance_from_start,
+        ),
+    )
+    if line_segments.ndim == 2:
+        line_segments = line_segments[np.newaxis, :, :]
+
+    vec = vector(line_segments[:, 1:2, :], line_segments[:, 0:1, :])
+    vec_mag = np.concatenate([magnitude(vec, -1)[:, :, np.newaxis]] * 2, axis=-1)
+    return (distance_from_start * vec_mag) * unit_vector(vec)
+
+
+def minimum_in_matrix(input_matrix: np.ndarray, find_minimum_in_axis=1):
+    """
+
+    :param input_matrix:
+    :param find_minimum_in_axis:
+    :return:
+    """
+    assert input_matrix.shape[-1] == 2 and input_matrix.ndim == 2, (
+        "Expected input_coordinates to have shape '[number of points, 2]'" "got %s",
+        (input_matrix.shape,),
+    )
+
+    assert find_minimum_in_axis in [1, 2], (
+        "Expected shortest_distance_axis to be in '[1, 2]'" "got %s",
+        (find_minimum_in_axis,),
+    )
+    minimum = np.argmin(input_matrix, axis=find_minimum_in_axis)
+
+    return minimum, input_matrix[minimum]
