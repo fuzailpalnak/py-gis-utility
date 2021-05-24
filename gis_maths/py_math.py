@@ -3,65 +3,8 @@ from typing import Union
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
-
-def raise_value_assertion(values):
-    raise AssertionError(
-        "Expected values to be either '[n_line_segments, 1, 1]' or '[1, 1]'"
-        "got %s, %s",
-        (
-            values.ndim,
-            values.shape,
-        ),
-    )
-
-
-def raise_point_assertion(points):
-    raise AssertionError(
-        "Expected points to be either '[n_line_segments, 1, 2]' or '[1, 2]'"
-        "got %s, %s",
-        (
-            points.ndim,
-            points.shape,
-        ),
-    )
-
-
-def raise_line_segment_assertion(line_segments):
-    raise AssertionError(
-        "Expected line segment coordinates to be either '[n_line_segments, 2, 2]' or '[2, 2]'"
-        "got %s, %s",
-        (
-            line_segments.ndim,
-            line_segments.shape,
-        ),
-    )
-
-
-def is_points_structure(points):
-    return (
-        True
-        if (points.ndim == 2 or points.ndim == 3)
-        and ((points.shape[-2], points.shape[-1]) == (1, 2))
-        else False
-    )
-
-
-def is_value_structure(values):
-    return (
-        True
-        if (values.ndim == 2 or values.ndim == 3)
-        and ((values.shape[-2], values.shape[-1]) == (1, 1))
-        else False
-    )
-
-
-def is_line_segment_structure(line_segments):
-    return (
-        True
-        if (line_segments.ndim == 2 or line_segments.ndim == 3)
-        and ((line_segments.shape[-2], line_segments.shape[-1]) == (2, 2))
-        else False
-    )
+from gis_maths.checks import is_line_segment_structure, raise_line_segment_assertion, is_points_structure, \
+    raise_point_assertion, is_value_structure, raise_value_assertion
 
 
 def angle_between_vector(v1: tuple, v2: tuple):
@@ -519,7 +462,6 @@ def _get_coordinate_based_on_angle_and_distance(
     )
 
     assert is_value_structure(angle), raise_value_assertion(angle)
-
     assert is_value_structure(distance), raise_value_assertion(distance)
 
     assert (points.ndim == distance.ndim) and (points.ndim == angle.ndim), (
