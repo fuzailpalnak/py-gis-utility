@@ -466,11 +466,39 @@ def _get_coordinate_based_on_angle_and_distance(
     points: np.ndarray, angle: np.ndarray, distance: np.ndarray
 ) -> np.ndarray:
     """
+    Given a Point find a new point at an given 'angle' with given 'distance'
+
+          / B [New Point]
+         /
+        /  angle CAB and distance AB [GIVEN]
+       A ------------ C
+
     # https://math.stackexchange.com/questions/39390/determining-end-coordinates-of-line-with-the-specified-length-and-angle
 
-    :param points:
-    :param angle:
-    :param distance:
+    :param points: array of shape [number_of_line_segments, 1, 2] or [1, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [1, 2] are [
+                                                [point_x, point_y],
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_points, 1, 2] are [
+                                                                        [
+                                                                        [point_1_x, point_1_y],
+                                                                        ],
+                                                                        [
+                                                                        [point_2_x, point_2_y],
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [point_n_x, point_n_y],
+                                                                        ],
+                                                                    ]
+    :param angle: array of shape [number_of_points, 1, 1] or [1, 1]
+    :param distance: array of shape [number_of_points, 1, 1] or [1, 1]
     :return:
     """
     assert (
@@ -520,9 +548,36 @@ def _get_point_after_certain_distance(
     https://math.stackexchange.com/questions/175896/finding-a-point-along-a-line-a-certain-distance-away-from-another-point
     https://math.stackexchange.com/a/426810
 
-    :param distance_from_start:
-    :param line_segments:
-    :return:
+    :param distance_from_start: array specifying the distance to compute the point
+            shape [number_of_line_segments, 1, 1] or [1, 1]
+    :param line_segments: array of shape [number_of_line_segments, 2, 2] or [2, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [2, 2] are [
+                                                [start_line_segment_x, start_line_segment_y],
+                                                [end_line_segment_x,   end_line_segment_y]
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_line_segments, 2, 2] are [
+                                                                        [
+                                                                        [start_line_segment_1_x, start_line_segment_1_y],
+                                                                        [end_line_segment_1_x,   end_line_segment_1_y]
+                                                                        ],
+                                                                        [
+                                                                        [start_line_segment_2_x, start_line_segment_2_y],
+                                                                        [end_line_segment_2_x,   end_line_segment_2_y]
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [start_line_segment_n_x, start_line_segment_n_y],
+                                                                        [end_line_segment_n_x,   end_line_segment_n_y]
+                                                                        ],
+                                                                    ]
+    :return: points on the line segment with distance 'd'
+
     """
     assert (
         type(line_segments) is np.ndarray and type(distance_from_start) is np.ndarray
@@ -584,6 +639,37 @@ def minimum_in_matrix(input_matrix: np.ndarray, find_minimum_in_axis=1):
 def get_points_after_same_distance_for_all_line_segments(
     line_segments: np.ndarray, distance_from_start: Union[float, int]
 ) -> np.ndarray:
+    """
+
+    :param line_segments: array of shape [number_of_line_segments, 2, 2] or [2, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [2, 2] are [
+                                                [start_line_segment_x, start_line_segment_y],
+                                                [end_line_segment_x,   end_line_segment_y]
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_line_segments, 2, 2] are [
+                                                                        [
+                                                                        [start_line_segment_1_x, start_line_segment_1_y],
+                                                                        [end_line_segment_1_x,   end_line_segment_1_y]
+                                                                        ],
+                                                                        [
+                                                                        [start_line_segment_2_x, start_line_segment_2_y],
+                                                                        [end_line_segment_2_x,   end_line_segment_2_y]
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [start_line_segment_n_x, start_line_segment_n_y],
+                                                                        [end_line_segment_n_x,   end_line_segment_n_y]
+                                                                        ],
+                                                                    ]
+    :param distance_from_start:
+    :return:
+    """
     assert type(line_segments) is np.ndarray and type(distance_from_start) in [
         float,
         int,
@@ -617,12 +703,78 @@ def get_points_after_same_distance_for_all_line_segments(
 def get_points_after_custom_distance_for_every_line_segments(
     line_segments: np.ndarray, distance_from_start: np.ndarray
 ) -> np.ndarray:
+    """
+
+    :param line_segments: array of shape [number_of_line_segments, 2, 2] or [2, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [2, 2] are [
+                                                [start_line_segment_x, start_line_segment_y],
+                                                [end_line_segment_x,   end_line_segment_y]
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_line_segments, 2, 2] are [
+                                                                        [
+                                                                        [start_line_segment_1_x, start_line_segment_1_y],
+                                                                        [end_line_segment_1_x,   end_line_segment_1_y]
+                                                                        ],
+                                                                        [
+                                                                        [start_line_segment_2_x, start_line_segment_2_y],
+                                                                        [end_line_segment_2_x,   end_line_segment_2_y]
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [start_line_segment_n_x, start_line_segment_n_y],
+                                                                        [end_line_segment_n_x,   end_line_segment_n_y]
+                                                                        ],
+                                                                    ]
+    :param distance_from_start: array specifying the distance to compute the point
+            shape [number_of_line_segments, 1, 1] or [1, 1]
+    :return:
+    """
     return _get_point_after_certain_distance(line_segments, distance_from_start)
 
 
 def get_end_coordinates_with_common_angle_and_distance(
     points: np.ndarray, angle_in_degree: Union[float, int], distance: Union[float, int]
 ) -> np.ndarray:
+    """
+    Given a Point find a new point at an given 'angle' with given 'distance'
+
+          / B [New Point]
+         /
+        /  angle CAB and distance AB [Given]
+       A ------------ C
+
+    :param points: array of shape [number_of_line_segments, 1, 2] or [1, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [1, 2] are [
+                                                [point_x, point_y],
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_points, 1, 2] are [
+                                                                        [
+                                                                        [point_1_x, point_1_y],
+                                                                        ],
+                                                                        [
+                                                                        [point_2_x, point_2_y],
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [point_n_x, point_n_y],
+                                                                        ],
+                                                                    ]
+    :param angle_in_degree: array of shape [number_of_points, 1, 1] or [1, 1]
+    :param distance: array of shape [number_of_points, 1, 1] or [1, 1]
+    :return:
+    """
 
     assert (
         type(points) is np.ndarray
@@ -649,6 +801,40 @@ def get_end_coordinates_with_common_angle_and_distance(
 def get_end_coordinates_with_custom_angle_and_distance_for_every_point(
     points: np.ndarray, angle_in_degree: np.ndarray, distance: np.ndarray
 ) -> np.ndarray:
+    """
+    Given a Point find a new point at an given 'angle' with given 'distance'
+
+          / B [New Point]
+         /
+        /  angle CAB and distance AB [Given]
+       A ------------ C
+
+    :param points: array of shape [number_of_line_segments, 1, 2] or [1, 2]
+
+            If there is just one line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [1, 2] are [
+                                                [point_x, point_y],
+                                            ]
+            If there is multiple  line segment to which perpendicular distances are to be computed then pass it as
+            follows :
+                -- the dimension [number_of_points, 1, 2] are [
+                                                                        [
+                                                                        [point_1_x, point_1_y],
+                                                                        ],
+                                                                        [
+                                                                        [point_2_x, point_2_y],
+                                                                        ],
+                                                                        ....
+                                                                        ...
+                                                                        [
+                                                                        [point_n_x, point_n_y],
+                                                                        ],
+                                                                    ]
+    :param angle_in_degree: array of shape [number_of_points, 1, 1] or [1, 1]
+    :param distance: array of shape [number_of_points, 1, 1] or [1, 1]
+    :return:
+    """
     return _get_coordinate_based_on_angle_and_distance(
         points, angle_in_degree, distance
     )
