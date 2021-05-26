@@ -3,8 +3,14 @@ from typing import Union
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
-from gis_maths.checks import is_line_segment_structure, raise_line_segment_assertion, is_points_structure, \
-    raise_point_assertion, is_value_structure, raise_value_assertion
+from gis_maths.utils import (
+    is_input_a_line_segment,
+    get_line_segment_assertion_message,
+    is_input_a_point,
+    get_point_assertion_message,
+    is_input_a_value,
+    get_value_assertion_message,
+)
 
 
 def angle_between_vector(v1: tuple, v2: tuple):
@@ -45,49 +51,6 @@ def unit_vector(vec: np.ndarray, axis=-1) -> np.ndarray:
     )
 
 
-def extract_index(
-    from_input: np.ndarray, value: np.ndarray, along_axis: int = 0
-) -> np.ndarray:
-    """
-
-    :param along_axis:
-    :param from_input:
-    :param value:
-    :return:
-    """
-
-    assert type(from_input) is np.ndarray and type(value) is np.ndarray, (
-        "Expected to have input type 'np.ndarray'" "got %s, %s",
-        (type(from_input), type(value)),
-    )
-    assert from_input.ndim == 3 and (from_input.shape[-2], from_input.shape[-1]) == (
-        2,
-        2,
-    ), (
-        "Expected from_input coordinates to be either '[n_from_input, 2, 2]'"
-        "got %s, %s",
-        (
-            from_input.ndim,
-            from_input.shape,
-        ),
-    )
-
-    assert 0 <= along_axis <= from_input.ndim, (
-        "Expected along_axis to be in range ['0' and '%s']" "got %s",
-        (from_input.ndim, along_axis),
-    )
-
-    if value.ndim == 2 and from_input.ndim == 3:
-        value = value[np.newaxis, :, :]
-
-    assert from_input.ndim == value.ndim, (
-        "Expected to have same number of dimensions" "got %s, %s",
-        (from_input.ndim, value.ndim),
-    )
-
-    return np.unique(np.where(from_input == value)[along_axis])
-
-
 def euclidean_between_two_sets(
     coordinates_a: np.ndarray, coordinates_b: np.ndarray
 ) -> np.ndarray:
@@ -114,20 +77,17 @@ def euclidean_between_two_sets(
     :return: array of shape [n_coordinates_a, n_coordinates_b]
     """
 
-    assert type(coordinates_a) is np.ndarray and type(coordinates_b) is np.ndarray, (
-        "Expected to have input type 'np.ndarray'" "got %s, %s",
-        (type(coordinates_a), type(coordinates_b)),
-    )
+    assert (
+        type(coordinates_a) is np.ndarray and type(coordinates_b) is np.ndarray
+    ), f"Expected to have input type 'np.ndarray' got {type(coordinates_a)}, {type(coordinates_b)}"
 
-    assert coordinates_b.shape[-1] == 2 and coordinates_b.ndim == 2, (
-        "Expected orientation to have shape '[number of points, 2]'" "got %s",
-        (coordinates_b.shape,),
-    )
+    assert (
+        coordinates_b.shape[-1] == 2 and coordinates_b.ndim == 2
+    ), f"Expected input_coordinates to have shape '[number of points, 2]' got {coordinates_b.shape}"
 
-    assert coordinates_a.shape[-1] == 2 and coordinates_a.ndim == 2, (
-        "Expected input_coordinates to have shape '[number of points, 2]'" "got %s",
-        (coordinates_a.shape,),
-    )
+    assert (
+        coordinates_a.shape[-1] == 2 and coordinates_a.ndim == 2
+    ), f"Expected input_coordinates to have shape '[number of points, 2]' got {coordinates_a.shape}"
 
     distances = np.linalg.norm(
         np.concatenate(
@@ -162,11 +122,13 @@ def euclidean_between_self(coordinates_a: np.ndarray) -> np.ndarray:
         "Expected to have input type 'np.ndarray'" "got %s",
         (type(coordinates_a),),
     )
+    assert (
+        type(coordinates_a) is np.ndarray
+    ), f"Expected to have input type 'np.ndarray' got {type(coordinates_a)}"
 
-    assert coordinates_a.shape[-1] == 2 and coordinates_a.ndim == 2, (
-        "Expected input_coordinates to have shape '[number of points, 2]'" "got %s",
-        (coordinates_a.shape,),
-    )
+    assert (
+        coordinates_a.shape[-1] == 2 and coordinates_a.ndim == 2
+    ), f"Expected input_coordinates to have shape '[number of points, 2]' got {coordinates_a.shape}"
 
     return squareform(pdist(coordinates_a))
 
@@ -226,21 +188,17 @@ def perpendicular_distance_from_point_to_line_segment_in_2d(
     # https://www.geeksforgeeks.org/minimum-distance-from-a-point-to-the-line-segment-using-vectors/
     # https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
 
-    assert type(line_segment) is np.ndarray and type(coordinates) is np.ndarray, (
-        "Expected to have input type 'np.ndarray'" "got %s, %s",
-        (type(line_segment), type(coordinates)),
-    )
+    assert (
+        type(line_segment) is np.ndarray and type(coordinates) is np.ndarray
+    ), f"Expected to have input type 'np.ndarray' got {type(line_segment)} and {type(coordinates)}"
 
     assert coordinates.ndim == 2 and coordinates.shape[-1] == 2, (
-        "Expected coordinates to be '2' dimensional and have shape '[number of point, 2]'"
-        "got %s, %s",
-        (
-            coordinates.ndim,
-            coordinates.shape,
-        ),
+        f"Expected coordinates to be '2' dimensional and have shape '[number of point, 2]' got {coordinates.shape},"
+        f" {coordinates.ndim}"
     )
-    assert is_line_segment_structure(line_segment), raise_line_segment_assertion(
-        line_segment
+
+    assert is_input_a_line_segment(line_segment), AssertionError(
+        get_line_segment_assertion_message(line_segment)
     )
 
     if line_segment.ndim == 2:
@@ -327,24 +285,21 @@ def perpendicular_point_to_line_segment(
         float,
         int,
     ], (
-        "Expected to have input type ['np.ndarray', '[float, int]']" "got %s, %s",
-        (type(line_segment), type(distance_from_the_line)),
+        f"Expected to have input type ['np.ndarray', '[float, int]'] got {type(line_segment)}"
+        f" and {type(distance_from_the_line)}"
     )
 
-    assert is_line_segment_structure(line_segment), raise_line_segment_assertion(
-        line_segment
+    assert is_input_a_line_segment(line_segment), AssertionError(
+        get_line_segment_assertion_message(line_segment)
     )
 
     assert (
         type(distance_from_the_line) in [float, int] and distance_from_the_line > 0
     ), (
         "Expected distance_from_the_line to be of type 'float, int' and 'non zero'"
-        "got %s, %s",
-        (
-            type(distance_from_the_line),
-            distance_from_the_line,
-        ),
+        f"got {type(distance_from_the_line)}, {distance_from_the_line}"
     )
+
     if line_segment.ndim == 2:
         line_segment = line_segment[np.newaxis, :, :]
 
@@ -450,24 +405,21 @@ def _get_coordinate_based_on_angle_and_distance(
         and type(angle) is np.ndarray
     ), (
         "Expected to have input type ['np.ndarray', 'np.ndarray', 'np.ndarray']"
-        "got %s, %s",
-        (type(points), type(distance), type(angle)),
+        f"got {type(points), type(distance), type(angle)}"
     )
 
-    assert is_points_structure(points), raise_point_assertion(points)
+    assert is_input_a_point(points), AssertionError(get_point_assertion_message(points))
 
-    assert np.all(distance >= 0), (
-        "Expected distance to be 'non zero'" "got %s",
-        (distance,),
+    assert np.all(distance >= 0), f"Expected distance to be 'non zero' got {distance}"
+
+    assert is_input_a_value(angle), AssertionError(get_value_assertion_message(angle))
+    assert is_input_a_value(distance), AssertionError(
+        get_value_assertion_message(distance)
     )
 
-    assert is_value_structure(angle), raise_value_assertion(angle)
-    assert is_value_structure(distance), raise_value_assertion(distance)
-
-    assert (points.ndim == distance.ndim) and (points.ndim == angle.ndim), (
-        "Expected input to have same dimension," "got %s, %s, %s",
-        (points.ndim, distance.ndim, angle.ndim),
-    )
+    assert (points.ndim == distance.ndim) and (
+        points.ndim == angle.ndim
+    ), f"Expected input to have same dimension, got {points.ndim, distance.ndim, angle.ndim}"
 
     if points.ndim == 2:
         points = points[np.newaxis, :, :]
@@ -523,31 +475,23 @@ def _get_point_after_certain_distance(
     """
     assert (
         type(line_segments) is np.ndarray and type(distance_from_start) is np.ndarray
-    ), (
-        "Expected to have input type ['np.ndarray', 'np.ndarray']" "got %s, %s",
-        (type(line_segments), type(distance_from_start)),
+    ), f"Expected to have input type ['np.ndarray', 'np.ndarray'] got {type(line_segments), type(distance_from_start)}"
+
+    assert is_input_a_line_segment(line_segments), AssertionError(
+        get_line_segment_assertion_message(line_segments)
     )
 
-    assert is_line_segment_structure(line_segments), raise_line_segment_assertion(
-        line_segments
+    assert np.all(
+        distance_from_start >= 0
+    ), f"Expected distance_from_the_line to be  'non negative' got {distance_from_start}"
+
+    assert is_input_a_value(distance_from_start), AssertionError(
+        get_value_assertion_message(distance_from_start)
     )
 
-    assert np.all(distance_from_start >= 0), (
-        "Expected distance_from_the_line to be  'non negative'" "got %s",
-        (distance_from_start,),
-    )
-
-    assert is_value_structure(distance_from_start), raise_value_assertion(
-        distance_from_start
-    )
-
-    assert line_segments.ndim == distance_from_start.ndim, (
-        "Expected input to have same dimension," "got %s, %s",
-        (
-            line_segments.ndim,
-            distance_from_start.ndim,
-        ),
-    )
+    assert (
+        line_segments.ndim == distance_from_start.ndim
+    ), f"Expected input to have same dimension,got {line_segments.ndim, distance_from_start.ndim}"
     if line_segments.ndim == 2:
         line_segments = line_segments[np.newaxis, :, :]
         distance_from_start = distance_from_start[np.newaxis, :, :]
@@ -564,15 +508,14 @@ def minimum_in_matrix(input_matrix: np.ndarray, find_minimum_in_axis=1):
     :param find_minimum_in_axis:
     :return:
     """
-    assert input_matrix.shape[-1] == 2 and input_matrix.ndim == 2, (
-        "Expected input_coordinates to have shape '[number of points, 2]'" "got %s",
-        (input_matrix.shape,),
-    )
+    assert (
+        input_matrix.shape[-1] == 2 and input_matrix.ndim == 2
+    ), f"Expected input_coordinates to have shape '[number of points, 2]'got {input_matrix.shape}"
 
-    assert find_minimum_in_axis in [1, 2], (
-        "Expected shortest_distance_axis to be in '[1, 2]'" "got %s",
-        (find_minimum_in_axis,),
-    )
+    assert find_minimum_in_axis in [
+        1,
+        2,
+    ], f"Expected shortest_distance_axis to be in '[1, 2]' got {find_minimum_in_axis}"
     minimum = np.argmin(input_matrix, axis=find_minimum_in_axis)
 
     return minimum, input_matrix[minimum]
@@ -615,21 +558,15 @@ def get_points_after_same_distance_for_all_line_segments(
     assert type(line_segments) is np.ndarray and type(distance_from_start) in [
         float,
         int,
-    ], (
-        "Expected to have input type ['np.ndarray', '[int, float]']" "got %s, %s",
-        (type(line_segments), type(distance_from_start)),
-    )
-    assert is_line_segment_structure(line_segments), raise_line_segment_assertion(
-        line_segments
+    ], f"Expected to have input type ['np.ndarray', '[int, float]'] got {type(line_segments), type(distance_from_start)}"
+
+    assert is_input_a_line_segment(line_segments), AssertionError(
+        get_line_segment_assertion_message(line_segments)
     )
 
     assert type(distance_from_start) in [float, int] and distance_from_start >= 0.0, (
         "Expected distance_from_the_line to be of type 'float or int' and 'non zero'"
-        "got %s, %s",
-        (
-            type(distance_from_start),
-            distance_from_start,
-        ),
+        f"got {type(distance_from_start), distance_from_start}"
     )
 
     if line_segments.ndim == 2:
@@ -724,11 +661,10 @@ def get_end_coordinates_with_common_angle_and_distance(
         and type(angle_in_degree) in [float, int]
     ), (
         "Expected to have input type ['np.ndarray', '[float, int]', '[float, int]']"
-        "got %s, %s",
-        (type(points), type(distance), type(angle_in_degree)),
+        f"got {type(points), type(distance), type(angle_in_degree)}"
     )
 
-    assert is_points_structure(points), raise_point_assertion(points)
+    assert is_input_a_point(points), AssertionError(get_point_assertion_message(points))
 
     if points.ndim == 2:
         points = points[np.newaxis, :, :]
