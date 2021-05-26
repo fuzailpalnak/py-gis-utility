@@ -5,11 +5,8 @@ from scipy.spatial.distance import pdist, squareform
 
 from gis_maths.utils import (
     is_input_a_line_segment,
-    get_line_segment_assertion_message,
     is_input_a_point,
-    get_point_assertion_message,
     is_input_a_value,
-    get_value_assertion_message,
 )
 
 
@@ -197,8 +194,9 @@ def perpendicular_distance_from_point_to_line_segment_in_2d(
         f" {coordinates.ndim}"
     )
 
-    assert is_input_a_line_segment(line_segment), AssertionError(
-        get_line_segment_assertion_message(line_segment)
+    assert is_input_a_line_segment(line_segment), (
+        f"Expected line segments to be either '[n_values, 2, 2]' for n_dim == 3 or '[2, 2]' for n_dim == 2, "
+        f"got {line_segment.shape} for n_dim == {line_segment.ndim}"
     )
 
     if line_segment.ndim == 2:
@@ -289,8 +287,9 @@ def perpendicular_point_to_line_segment(
         f" and {type(distance_from_the_line)}"
     )
 
-    assert is_input_a_line_segment(line_segment), AssertionError(
-        get_line_segment_assertion_message(line_segment)
+    assert is_input_a_line_segment(line_segment), (
+        f"Expected line segments to be either '[n_values, 2, 2]' for n_dim == 3 or '[2, 2]' for n_dim == 2, "
+        f"got {line_segment.shape} for n_dim == {line_segment.ndim}"
     )
 
     assert (
@@ -408,14 +407,21 @@ def _get_coordinate_based_on_angle_and_distance(
         f"got {type(points), type(distance), type(angle)}"
     )
 
-    assert is_input_a_point(points), AssertionError(get_point_assertion_message(points))
+    assert is_input_a_point(points), (
+        f"Expected points to be either '[n_points, 1, 2]' for n_dim == 3 or '[1, 2]' for n_dim == 2,"
+        f"got {points.shape} for n_dim == {points.ndim}"
+    )
+
+    assert is_input_a_value(angle), (
+        f"Expected values to be either '[n_values, 1, 1]' for n_dim == 3 or '[1, 1]' for n_dim == 2, "
+        f"got {angle.shape} for n_dim == {angle.ndim}"
+    )
+    assert is_input_a_value(distance), (
+        f"Expected values to be either '[n_values, 1, 1]' for n_dim == 3 or '[1, 1]' for n_dim == 2, "
+        f"got {distance.shape} for n_dim == {distance.ndim}"
+    )
 
     assert np.all(distance >= 0), f"Expected distance to be 'non zero' got {distance}"
-
-    assert is_input_a_value(angle), AssertionError(get_value_assertion_message(angle))
-    assert is_input_a_value(distance), AssertionError(
-        get_value_assertion_message(distance)
-    )
 
     assert (points.ndim == distance.ndim) and (
         points.ndim == angle.ndim
@@ -477,16 +483,18 @@ def _get_point_after_certain_distance(
         type(line_segments) is np.ndarray and type(distance_from_start) is np.ndarray
     ), f"Expected to have input type ['np.ndarray', 'np.ndarray'] got {type(line_segments), type(distance_from_start)}"
 
-    assert is_input_a_line_segment(line_segments), AssertionError(
-        get_line_segment_assertion_message(line_segments)
+    assert is_input_a_line_segment(line_segments), (
+        f"Expected line segments to be either '[n_values, 2, 2]' for n_dim == 3 or '[2, 2]' for n_dim == 2, "
+        f"got {line_segments.shape} for n_dim == {line_segments.ndim}"
     )
 
     assert np.all(
         distance_from_start >= 0
     ), f"Expected distance_from_the_line to be  'non negative' got {distance_from_start}"
 
-    assert is_input_a_value(distance_from_start), AssertionError(
-        get_value_assertion_message(distance_from_start)
+    assert is_input_a_value(distance_from_start), (
+        f"Expected values to be either '[n_values, 1, 1]' for n_dim == 3 or '[1, 1]' for n_dim == 2, "
+        f"got {distance_from_start.shape} for n_dim == {distance_from_start.ndim}"
     )
 
     assert (
@@ -560,8 +568,9 @@ def get_points_after_same_distance_for_all_line_segments(
         int,
     ], f"Expected to have input type ['np.ndarray', '[int, float]'] got {type(line_segments), type(distance_from_start)}"
 
-    assert is_input_a_line_segment(line_segments), AssertionError(
-        get_line_segment_assertion_message(line_segments)
+    assert is_input_a_line_segment(line_segments), (
+        f"Expected line segments to be either '[n_values, 2, 2]' for n_dim == 3 or '[2, 2]' for n_dim == 2, "
+        f"got {line_segments.shape} for n_dim == {line_segments.ndim}"
     )
 
     assert type(distance_from_start) in [float, int] and distance_from_start >= 0.0, (
@@ -664,7 +673,10 @@ def get_end_coordinates_with_common_angle_and_distance(
         f"got {type(points), type(distance), type(angle_in_degree)}"
     )
 
-    assert is_input_a_point(points), AssertionError(get_point_assertion_message(points))
+    assert is_input_a_point(points), (
+        f"Expected points to be either '[n_points, 1, 2]' for n_dim == 3 or '[1, 2]' for n_dim == 2,"
+        f"got {points.shape} for n_dim == {points.ndim}"
+    )
 
     if points.ndim == 2:
         points = points[np.newaxis, :, :]

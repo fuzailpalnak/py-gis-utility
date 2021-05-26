@@ -95,24 +95,3 @@ def is_input_a_line_segment(line_segments):
         )
         else False
     )
-
-
-def get_point_assertion_message(points: np.ndarray):
-    return (
-        f"Expected points to be either '[n_points, 1, 2]' for n_dim == 3 or '[1, 2]' for n_dim == 2,"
-        f"got {points.shape} for n_dim == {points.ndim}"
-    )
-
-
-def get_value_assertion_message(values: np.ndarray):
-    return (
-        f"Expected values to be either '[n_values, 1, 1]' for n_dim == 3 or '[1, 1]' for n_dim == 2, "
-        f"got {values.shape} for n_dim == {values.ndim}"
-    )
-
-
-def get_line_segment_assertion_message(line_segments: np.ndarray):
-    return (
-        f"Expected line segments to be either '[n_values, 2, 2]' for n_dim == 3 or '[2, 2]' for n_dim == 2, "
-        f"got {line_segments.shape} for n_dim == {line_segments.ndim}"
-    )
