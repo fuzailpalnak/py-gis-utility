@@ -12,34 +12,24 @@ def extract_index(
     :return:
     """
 
-    assert type(from_input) is np.ndarray and type(value) is np.ndarray, (
-        "Expected to have input type 'np.ndarray'" "got %s, %s",
-        (type(from_input), type(value)),
-    )
+    assert (
+        type(from_input) is np.ndarray and type(value) is np.ndarray
+    ), f"Expected to have input type 'np.ndarray' got {type(from_input), type(value)}"
     assert from_input.ndim == 3 and (from_input.shape[-2], from_input.shape[-1]) == (
         2,
         2,
-    ), (
-        "Expected from_input coordinates to be either '[n_from_input, 2, 2]'"
-        "got %s, %s",
-        (
-            from_input.ndim,
-            from_input.shape,
-        ),
-    )
+    ), f"Expected from_input coordinates to be either '[n_from_input, 2, 2]' got {from_input.ndim, from_input.shape}"
 
-    assert 0 <= along_axis <= from_input.ndim, (
-        "Expected along_axis to be in range ['0' and '%s']" "got %s",
-        (from_input.ndim, along_axis),
-    )
+    assert (
+        0 <= along_axis <= from_input.ndim
+    ), f"Expected along_axis to be in range ['0' and '%s'] got {from_input.ndim, along_axis}"
 
     if value.ndim == 2 and from_input.ndim == 3:
         value = value[np.newaxis, :, :]
 
-    assert from_input.ndim == value.ndim, (
-        "Expected to have same number of dimensions" "got %s, %s",
-        (from_input.ndim, value.ndim),
-    )
+    assert (
+        from_input.ndim == value.ndim
+    ), f"Expected to have same number of dimensions got {from_input.ndim, value.ndim}"
 
     return np.unique(np.where(from_input == value)[along_axis])
 
