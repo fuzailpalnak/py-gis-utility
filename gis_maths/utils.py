@@ -1,6 +1,31 @@
 import numpy as np
 
 
+def convert_2d_input_to_3d_batch_format(input_array: np.ndarray) -> np.ndarray:
+    input_array = input_array[np.newaxis, :, :]
+    return input_array
+
+
+def minimum_in_matrix(input_matrix: np.ndarray, find_minimum_in_axis=1):
+    """
+
+    :param input_matrix:
+    :param find_minimum_in_axis:
+    :return:
+    """
+    assert (
+        input_matrix.shape[-1] == 2 and input_matrix.ndim == 2
+    ), f"Expected input_coordinates to have shape '[number of points, 2]'got {input_matrix.shape}"
+
+    assert find_minimum_in_axis in [
+        1,
+        2,
+    ], f"Expected shortest_distance_axis to be in '[1, 2]' got {find_minimum_in_axis}"
+    minimum = np.argmin(input_matrix, axis=find_minimum_in_axis)
+
+    return minimum, input_matrix[minimum]
+
+
 def extract_index(
     from_input: np.ndarray, value: np.ndarray, along_axis: int = 0
 ) -> np.ndarray:
