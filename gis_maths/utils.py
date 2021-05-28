@@ -1,9 +1,14 @@
 import numpy as np
 
 
-def convert_2d_input_to_3d_batch_format(input_array: np.ndarray) -> np.ndarray:
+def convert_2d_input_to_3d_single_batch_format(input_array: np.ndarray) -> np.ndarray:
     input_array = input_array[np.newaxis, :, :]
     return input_array
+
+
+def convert_1d_coordinates_to_2d_single_batch_format(input_coordinates: np.ndarray) -> np.ndarray:
+    input_coordinates = input_coordinates[np.newaxis, :]
+    return input_coordinates
 
 
 def minimum_in_matrix(input_matrix: np.ndarray, find_minimum_in_axis=1):
@@ -67,56 +72,46 @@ def get_coordinate_structure(input_array: np.ndarray) -> tuple:
     return input_array.shape[-2], input_array.shape[-1]
 
 
-def is_input_dimension_constraint_satisfied(n_dim: int) -> bool:
-    return True if (n_dim == 2 or n_dim == 3) else False
+def is_input_3d(input_array: np.ndarray) -> bool:
+    return True if get_dimension(input_array) == 3 else False
 
 
-def is_point_structure_constraint_satisfied(input_shape: tuple) -> bool:
-    return True if (input_shape == (1, 2)) else False
+def is_input_2d(input_array: np.ndarray) -> bool:
+    return True if get_dimension(input_array) == 2 else False
 
 
-def is_value_structure_constraint_satisfied(input_shape: tuple) -> bool:
-    return True if (input_shape == (1, 1)) else False
+def is_line_segment(input_array: np.ndarray) -> bool:
+    return True if (get_coordinate_structure(input_array) == (2, 2)) else False
 
 
-def is_line_segment_structure_constraint_satisfied(input_shape: tuple) -> bool:
-    return True if (input_shape == (2, 2)) else False
+def is_value(input_array: np.ndarray) -> bool:
+    return True if (get_coordinate_structure(input_array) == (1, 1)) else False
 
 
-def is_input_a_point(points):
-    return (
-        True
-        if (
-            is_input_dimension_constraint_satisfied(get_dimension(points))
-            and is_point_structure_constraint_satisfied(
-                get_coordinate_structure(points)
-            )
-        )
-        else False
-    )
+def is_point(input_array: np.ndarray) -> bool:
+    return True if (get_coordinate_structure(input_array) == (1, 2)) else False
 
 
-def is_input_a_value(values):
-    return (
-        True
-        if (
-            is_input_dimension_constraint_satisfied(get_dimension(values))
-            and is_value_structure_constraint_satisfied(
-                get_coordinate_structure(values)
-            )
-        )
-        else False
-    )
+def is_line_segment_3d(line_segments: np.ndarray) -> bool:
+    return True if(is_input_3d(line_segments) and is_line_segment(line_segments)) else False
 
 
-def is_input_a_line_segment(line_segments):
-    return (
-        True
-        if (
-            is_input_dimension_constraint_satisfied(get_dimension(line_segments))
-            and is_line_segment_structure_constraint_satisfied(
-                get_coordinate_structure(line_segments)
-            )
-        )
-        else False
-    )
+def is_value_3d(values: np.ndarray) -> bool:
+    return True if (is_input_3d(values) and is_value(values)) else False
+
+
+def is_point_3d(points: np.ndarray) -> bool:
+    return True if (is_input_3d(points) and is_point(points)) else False
+
+
+def is_line_segment_2d(line_segments: np.ndarray) -> bool:
+    return True if(is_input_2d(line_segments) and is_line_segment(line_segments)) else False
+
+
+def is_value_2d(values: np.ndarray) -> bool:
+    return True if (is_input_2d(values) and is_value(values)) else False
+
+
+def is_point_2d(points: np.ndarray) -> bool:
+    return True if (is_input_2d(points) and is_point(points)) else False
+
