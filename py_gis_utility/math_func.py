@@ -2,14 +2,14 @@ from typing import Union
 
 import numpy as np
 
-from gis_maths.compute.functions import (
+from py_gis_utility.math_utils.math_ops import (
     new_perpendicular_point_to_line_segment,
     new_coordinate_based_on_angle_and_distance,
     new_point_after_certain_distance,
     euclidean,
     euclidean_between_two_sets,
 )
-from gis_maths.utils import is_line_segment_3d, is_point_3d
+from py_gis_utility.helper import is_line_segment_3d, is_point_3d
 
 
 def get_new_perpendicular_point_with_common_distance_all_to_line_segment(

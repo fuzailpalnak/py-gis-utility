@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
-from gis_maths.compute.utils import (
+from py_gis_utility.helper import (
     is_line_segment_3d,
     is_value_3d,
     is_point_3d,
