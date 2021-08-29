@@ -1,7 +1,4 @@
-from typing import Optional, Collection
-
 import numpy as np
-import pandas as pd
 
 
 def convert_2d_input_to_3d_single_batch_format(input_array: np.ndarray) -> np.ndarray:
@@ -9,9 +6,7 @@ def convert_2d_input_to_3d_single_batch_format(input_array: np.ndarray) -> np.nd
     return input_array
 
 
-def convert_1d_coordinates_to_2d_single_batch_format(
-    input_coordinates: np.ndarray,
-) -> np.ndarray:
+def convert_1d_coordinates_to_2d_single_batch_format(input_coordinates: np.ndarray) -> np.ndarray:
     input_coordinates = input_coordinates[np.newaxis, :]
     return input_coordinates
 
@@ -98,11 +93,7 @@ def is_point(input_array: np.ndarray) -> bool:
 
 
 def is_line_segment_3d(line_segments: np.ndarray) -> bool:
-    return (
-        True
-        if (is_input_3d(line_segments) and is_line_segment(line_segments))
-        else False
-    )
+    return True if(is_input_3d(line_segments) and is_line_segment(line_segments)) else False
 
 
 def is_value_3d(values: np.ndarray) -> bool:
@@ -114,11 +105,7 @@ def is_point_3d(points: np.ndarray) -> bool:
 
 
 def is_line_segment_2d(line_segments: np.ndarray) -> bool:
-    return (
-        True
-        if (is_input_2d(line_segments) and is_line_segment(line_segments))
-        else False
-    )
+    return True if(is_input_2d(line_segments) and is_line_segment(line_segments)) else False
 
 
 def is_value_2d(values: np.ndarray) -> bool:
@@ -127,11 +114,3 @@ def is_value_2d(values: np.ndarray) -> bool:
 
 def is_point_2d(points: np.ndarray) -> bool:
     return True if (is_input_2d(points) and is_point(points)) else False
-
-
-def create_frame_with_columns(columns: Optional[Collection] = None, **kwargs):
-    pd.set_option("precision", 16)
-    data_frame = pd.DataFrame(columns)
-    for name, value in kwargs.items():
-        data_frame[name] = value
-    return data_frame

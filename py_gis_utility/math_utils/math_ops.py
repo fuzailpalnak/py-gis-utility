@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
-from gis_maths.compute.utils import (
+from py_gis_utility.helper import (
     is_line_segment_3d,
     is_value_3d,
     is_point_3d,
@@ -225,6 +225,7 @@ def new_perpendicular_point_to_line_segment(
 
     :param line_segment: array of shape [number_of_line_segments, 2, 2]
 
+            If the line segment to which perpendicular distances are to be computed then pass it as
             follows :
                 -- the dimension [number_of_line_segments, 2, 2] are [
                                                                         [
@@ -352,6 +353,7 @@ def new_coordinate_based_on_angle_and_distance(
     # https://math.stackexchange.com/questions/39390/determining-end-coordinates-of-line-with-the-specified-length-and-angle
 
     :param points: array of shape [number_of_line_segments, 1, 2]
+            If the line segment to which perpendicular distances are to be computed then pass it as
             follows :
                 -- the dimension [number_of_points, 1, 2] are [
                                                                         [
@@ -419,6 +421,7 @@ def new_point_after_certain_distance(
             shape [number_of_line_segments, 1, 1] or [1, 1]
     :param line_segments: array of shape [number_of_line_segments, 2, 2]
 
+            If the line segment to which perpendicular distances are to be computed then pass it as
             follows :
                 -- the dimension [number_of_line_segments, 2, 2] are [
                                                                         [
