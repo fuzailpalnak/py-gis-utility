@@ -1,5 +1,75 @@
+from typing import Union
+
+import affine
+import geopandas
 import numpy as np
 import rasterio
+from pandas import Series
+from shapely.geometry import mapping
+from stitch_n_split.geo_info import get_affine_transform
+from stitch_n_split.split.mesh import (
+    mesh_from_geo_transform,
+    ImageNonOverLapMesh,
+    ImageOverLapMesh,
+)
+
+
+def read_data_frame(path: str):
+    return geopandas.read_file(path)
+
+
+def create_mesh(
+    mesh_bounds: tuple,
+    grid_size: tuple,
+    pixel_resolution: tuple,
+    is_overlap: bool = False,
+) -> Union[ImageNonOverLapMesh, ImageOverLapMesh]:
+    mesh = mesh_from_geo_transform(
+        grid_size=grid_size,
+        transform=get_affine_transform(
+            mesh_bounds[0], mesh_bounds[-1], *pixel_resolution
+        ),
+        mesh_bounds=mesh_bounds,
+        overlap=is_overlap,
+    )
+    return mesh
+
+
+def extract_geometry_from_data_frame_row(row: Series, geojson_geometry: bool = False):
+    if "geometry" not in list(row.keys()):
+        raise KeyError("Missing Keys, Must have keys ['geometry']")
+
+    feature_geometry = list()
+
+    for geometry in list(mapping(row["geometry"])["features"]):
+        feature_geometry.append(geometry["geometry"])
+
+    return feature_geometry
+
+
+def save_image_with_geo_transform(
+    save_path: str, image: np.ndarray, transform: affine.Affine
+):
+    """
+
+    :param save_path:
+    :param image:
+    :param transform:
+    :return:
+    """
+
+    bands = 1 if image.ndim == 2 else image.shape[-1]
+    with rasterio.open(
+        save_path,
+        "w",
+        driver="GTiff",
+        dtype=rasterio.uint8,
+        count=bands,
+        width=image.shape[0],
+        height=image.shape[1],
+        transform=transform,
+    ) as dst:
+        dst.write(image, indexes=1)
 
 
 def read_image_with_geo_transform(path: str):
