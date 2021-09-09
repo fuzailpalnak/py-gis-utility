@@ -1,0 +1,5 @@
+affine == 2.3.0
+numpy == 1.19.1
+opencv_python == 4.5.3.56
+scipy == 1.6.2
+stitch_n_split == 0.1.1
