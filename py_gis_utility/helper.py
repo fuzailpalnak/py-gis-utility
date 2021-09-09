@@ -4,7 +4,8 @@ import affine
 import geopandas
 import numpy as np
 import rasterio
-from pandas import Series
+from geopandas import GeoDataFrame
+from rasterio.io import BufferedDatasetWriter, DatasetWriter
 from shapely.geometry import mapping
 from stitch_n_split.geo_info import get_affine_transform
 from stitch_n_split.split.mesh import (
@@ -14,7 +15,7 @@ from stitch_n_split.split.mesh import (
 )
 
 
-def read_data_frame(path: str):
+def read_data_frame(path: str) -> GeoDataFrame:
     return geopandas.read_file(path)
 
 
@@ -35,7 +36,7 @@ def create_mesh(
     return mesh
 
 
-def extract_geometry_from_data_frame_row(row: Series, geojson_geometry: bool = False):
+def extract_geometry_from_data_frame_row(row: GeoDataFrame):
     if "geometry" not in list(row.keys()):
         raise KeyError("Missing Keys, Must have keys ['geometry']")
 
@@ -72,7 +73,7 @@ def save_image_with_geo_transform(
         dst.write(image, indexes=1)
 
 
-def read_image_with_geo_transform(path: str):
+def read_image_with_geo_transform(path: str) -> Union[BufferedDatasetWriter, DatasetWriter]:
     """
 
     :param path:
