@@ -2,7 +2,7 @@ from typing import Union
 
 import numpy as np
 
-from py_gis_utility.math_utils.math_ops import (
+from py_gis_utility.ops.math_ops import (
     new_perpendicular_point_to_line_segment,
     new_coordinate_based_on_angle_and_distance,
     new_point_after_certain_distance,

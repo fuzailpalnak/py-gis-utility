@@ -11,7 +11,7 @@ from py_gis_utility.helper import (
     read_data_frame,
     create_mesh,
 )
-from py_gis_utility.image_utils.image_ops import (
+from py_gis_utility.ops.image_ops import (
     convert_image_to_collection,
     copy_geo_reference_to_image,
     create_bitmap,
