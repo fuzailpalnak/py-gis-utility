@@ -25,6 +25,28 @@ def create_mesh(
     pixel_resolution: tuple,
     is_overlap: bool = False,
 ) -> Union[ImageNonOverLapMesh, ImageOverLapMesh]:
+    """
+
+    :param mesh_bounds:
+    :param grid_size:
+    :param pixel_resolution:
+    :param is_overlap: if set to true will find overlapping grid if any
+    :return:
+    """
+    assert len(mesh_bounds) == 4, (
+        f"Expected mesh_bounds to be in format (minx, miny, maxx, maxy) but got "
+        f"{mesh_bounds} of size {len(mesh_bounds)}"
+    )
+
+    assert len(grid_size) == 2, (
+        f"Expected grid_size to be in format (h x w) but got "
+        f"{grid_size} of size {len(grid_size)}"
+    )
+
+    assert (
+        len(pixel_resolution) == 2
+    ), f"Expected pixel_resolution to have size 2 but got {len(grid_size)}"
+
     mesh = mesh_from_geo_transform(
         grid_size=grid_size,
         transform=get_affine_transform(
@@ -36,7 +58,7 @@ def create_mesh(
     return mesh
 
 
-def extract_geometry_from_data_frame_row(row: GeoDataFrame):
+def extract_geometry_from_data_frame_row(row: GeoDataFrame) -> list:
     if "geometry" not in list(row.keys()):
         raise KeyError("Missing Keys, Must have keys ['geometry']")
 
@@ -73,7 +95,9 @@ def save_image_with_geo_transform(
         dst.write(image, indexes=1)
 
 
-def read_image_with_geo_transform(path: str) -> Union[BufferedDatasetWriter, DatasetWriter]:
+def read_image_with_geo_transform(
+    path: str,
+) -> Union[BufferedDatasetWriter, DatasetWriter]:
     """
 
     :param path:
