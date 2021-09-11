@@ -12,13 +12,15 @@ on:
   release:
     types: [published]
 
+
+
 jobs:
-  deploy:
+  build-n-publish:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
