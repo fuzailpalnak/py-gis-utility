@@ -46,9 +46,9 @@ def create_bitmap(
         yield Bitmap(bitmap_array, transform)
 
 
-def convert_image_to_collection(
+def image_to_collection_generator(
     image: np.ndarray, transform: affine.Affine, is_shape=False, **kwargs
-) -> List[Dict]:
+) -> Dict:
     """
 
     :param is_shape:
@@ -56,19 +56,18 @@ def convert_image_to_collection(
     :param image:
     :return:
     """
-    results = (
-        {"geometry": shape(s) if is_shape else s, "properties": {"id": v, **kwargs}}
-        for i, (s, v) in enumerate(
-            shapes(
-                image.astype(rasterio.uint8),
-                mask=None,
-                connectivity=8,
-                transform=transform,
-            )
+    for i, (s, v) in enumerate(
+        shapes(
+            image.astype(rasterio.uint8),
+            mask=None,
+            connectivity=8,
+            transform=transform,
         )
-    )
-    geometry_list = list(results)
-    return geometry_list
+    ):
+        yield {
+            "geometry": shape(s) if is_shape else s,
+            "properties": {"id": v, **kwargs},
+        }
 
 
 def copy_geo_reference_to_image(
@@ -103,28 +102,3 @@ def copy_geo_reference_to_image(
 
     copy_from.close()
     geo_referenced_image.close()
-
-
-def image_to_polygon_geometries(
-    image: np.ndarray, transform: affine.Affine, **kwargs
-) -> List[Dict[shape, Dict]]:
-    """
-
-    :param transform:
-    :param image:
-    :return:
-    """
-
-    return convert_image_to_collection(image, transform, is_shape=True, **kwargs)
-
-
-def image_to_polygon_coordinates(
-    image: np.ndarray, transform: affine.Affine, **kwargs
-) -> List[Dict]:
-    """
-
-    :param transform:
-    :param image:
-    :return:
-    """
-    return convert_image_to_collection(image, transform, is_shape=False, **kwargs)
