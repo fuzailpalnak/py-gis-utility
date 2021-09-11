@@ -24,10 +24,7 @@ setup(
     packages=find_packages(),
     python_requires="~=3.3",
     install_requires=install_requires,
-    keywords=[
-        "GIS",
-        "Image"
-    ],
+    keywords=["GIS", "Image"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

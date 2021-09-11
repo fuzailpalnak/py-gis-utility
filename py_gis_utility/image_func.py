@@ -1,9 +1,8 @@
 import cv2
-from typing import List, Dict, Union
+from typing import Dict, Union
 
 from geopandas import GeoDataFrame
 from rasterio.io import BufferedDatasetWriter, DatasetWriter
-from shapely.geometry import shape
 
 from py_gis_utility.helper import (
     read_image_with_geo_transform,
@@ -12,59 +11,57 @@ from py_gis_utility.helper import (
     create_mesh,
 )
 from py_gis_utility.ops.image_ops import (
-    convert_image_to_collection,
+    image_to_collection_generator,
     copy_geo_reference_to_image,
     create_bitmap,
 )
 
 
-def from_image_object_to_polygon_geometries(
+def image_obj_to_coordinates_generator(
     image: Union[BufferedDatasetWriter, DatasetWriter], **kwargs
-):
+) -> Dict:
     """
 
     :param image:
     :param kwargs:
     :return:
     """
-    return convert_image_to_collection(
+    return image_to_collection_generator(
         image.read(), image.transform, is_shape=False, crs=image.crs, **kwargs
     )
 
 
-def from_image_path_to_polygon_geometries(
-    image_path: str, **kwargs
-) -> List[Dict[shape, Dict]]:
+def image_path_to_coordinates_generator(image_path: str, **kwargs) -> Dict:
     """
 
     :param image_path:
     :return:
     """
-    return from_image_object_to_polygon_geometries(
+    return image_obj_to_coordinates_generator(
         read_image_with_geo_transform(image_path), **kwargs
     )
 
 
-def from_image_object_to_polygon_coordinates(
+def image_obj_to_shape_generator(
     image: Union[BufferedDatasetWriter, DatasetWriter], **kwargs
-) -> List[Dict]:
+) -> Dict:
     """
 
     :param image:
     :return:
     """
-    return convert_image_to_collection(
+    return image_to_collection_generator(
         image.read(), image.transform, is_shape=True, crs=image.crs, **kwargs
     )
 
 
-def from_image_path_to_polygon_coordinates(image_path: str, **kwargs) -> List[Dict]:
+def image_path_to_shape_generator(image_path: str, **kwargs) -> Dict:
     """
 
     :param image_path:
     :return:
     """
-    return from_image_object_to_polygon_coordinates(
+    return image_obj_to_shape_generator(
         read_image_with_geo_transform(image_path), **kwargs
     )
 
