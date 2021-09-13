@@ -14,7 +14,7 @@ except FileNotFoundError:
 
 setup(
     name="py-gis-utility",
-    version="0.1.0",
+    version="0.1.2",
     author="Fuzail Palnak",
     author_email="fuzailpalnak@gmail.com",
     url="https://github.com/fuzailpalnak/py-gis-utility",
