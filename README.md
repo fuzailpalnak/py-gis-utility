@@ -1,12 +1,13 @@
 # py-gis-utility
 
 A GIS utility library which contains some regularly required math and image operations.
+[![Downloads](https://static.pepy.tech/personalized-badge/py-gis-utility?period=month&units=international_system&left_color=yellowgreen&right_color=green&left_text=Downloads)](https://pepy.tech/project/py-gis-utility)
 
 <a href='https://ko-fi.com/fuzailpalnak' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Installation
     
-    pip install git+https://github.com/fuzailpalnak/py-gis-utility.git#egg=py_gis_utility
+    pip install py-gis-utility
     
     
 ## Requirements
@@ -26,8 +27,25 @@ A GIS utility library which contains some regularly required math and image oper
 5. Euclidean computation
 
 ## Image Operations
+- ### Save Multi Band Imagery
+```python
+import numpy as np
+from affine import Affine
+from py_gis_utility.image_func import save_16bit_multi_band, save_8bit_multi_band
 
-- Generate bitmap from shape file
+image = np.zeros((512, 512, 6))
+transform = Affine(1.0, 0.0, 3422098.682455578,
+       0.0, -1.0, 5289611.291479621)
+
+# Save 8bit
+save_8bit_multi_band(image, transform, 26910, r"8bit.tiff")
+
+# Save 16bit
+save_16bit_multi_band(image, transform, 26910, r"16bit.tiff")
+
+```
+
+- ### Generate bitmap from shape file
 
 ![Animation](https://user-images.githubusercontent.com/24665570/132937989-0a77de62-2c55-4369-a155-35326b21c82d.gif)
 
@@ -46,7 +64,7 @@ for i, bitmap in enumerate(bitmap_gen):
     save_image_with_geo_transform(f"{i}.tiff", bitmap.array, bitmap.transform)
 ```
 
-- Generate shape geometry from geo reference bitmap
+- ### Generate shape geometry from geo reference bitmap
 
 ```python
 
