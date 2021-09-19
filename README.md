@@ -1,9 +1,8 @@
 # py-gis-utility
 
 A GIS utility library which contains some regularly required math and image operations.
-[![Downloads](https://static.pepy.tech/personalized-badge/py-gis-utility?period=month&units=international_system&left_color=yellowgreen&right_color=green&left_text=Downloads)](https://pepy.tech/project/py-gis-utility)
 
-<a href='https://ko-fi.com/fuzailpalnak' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+[![Downloads](https://static.pepy.tech/personalized-badge/py-gis-utility?period=month&units=international_system&left_color=yellowgreen&right_color=green&left_text=Downloads)](https://pepy.tech/project/py-gis-utility)
 
 ## Installation
     
@@ -85,6 +84,10 @@ co_ord_gen = image_obj_to_coordinates_generator(img_obj)
 for g in co_ord_gen:
     print(g)
 ```
+
+## Support Me
+
+<a href='https://ko-fi.com/fuzailpalnak' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 
 
