@@ -15,6 +15,15 @@ from stitch_n_split.split.mesh import (
 )
 
 
+def concatenate_list_of_numpy_images(images_list: list) -> np.ndarray:
+    """
+
+    :param images_list: images must be of the format h X w X bands
+    :return:
+    """
+    return np.concatenate(images_list, axis=-1)
+
+
 def read_data_frame(path: str) -> GeoDataFrame:
     return geopandas.read_file(path)
 

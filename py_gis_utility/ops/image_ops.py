@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from typing import List, Dict, Union
+from typing import Dict, Union
 
 import affine
+import gdal
+import osr
 import rasterio
 import numpy as np
 
@@ -102,3 +104,29 @@ def copy_geo_reference_to_image(
 
     copy_from.close()
     geo_referenced_image.close()
+
+
+def save_multi_band(image: np.ndarray, geo_transform: affine.Affine, gdal_unit, epsg: int, output_file_name: str):
+    """
+
+    :param image: image must be of the format h X w X bands
+    :param geo_transform:
+    :param gdal_unit:
+    :param epsg:
+    :param output_file_name:
+    :return:
+    """
+    assert image.ndim == 3, f"Expected to have 3 dim got {image.ndim}"
+
+    x, y, z = image.shape
+    dst_ds = gdal.GetDriverByName('GTiff').Create(output_file_name, y, x, z, gdal_unit)
+
+    dst_ds.SetGeoTransform(geo_transform)
+    srs = osr.SpatialReference()
+    srs.ImportFromEPSG(epsg)
+    dst_ds.SetProjection(srs.ExportToWkt())
+
+    for idx in range(0, z):
+        dst_ds.GetRasterBand(idx + 1).WriteArray(image[:, :, idx])
+
+    dst_ds.FlushCache()
