@@ -1,4 +1,7 @@
+import affine
 import cv2
+import gdal
+import numpy as np
 from typing import Dict, Union
 
 from geopandas import GeoDataFrame
@@ -13,7 +16,7 @@ from py_gis_utility.helper import (
 from py_gis_utility.ops.image_ops import (
     image_to_collection_generator,
     copy_geo_reference_to_image,
-    create_bitmap,
+    create_bitmap, save_multi_band,
 )
 
 
@@ -128,3 +131,27 @@ def shape_geometry_to_bitmap_from_shape_geometry_path_generator(
         pixel_resolution,
         allow_output_to_overlap,
     )
+
+
+def save_8bit_multi_band(image: np.ndarray, geo_transform: affine.Affine, epsg: int, output_file_name: str):
+    """
+
+    :param image: image must be of the format h X w X bands
+    :param geo_transform:
+    :param epsg:
+    :param output_file_name:
+    :return:
+    """
+    save_multi_band(image, geo_transform, gdal.GDT_Byte, epsg, output_file_name)
+
+
+def save_16bit_multi_band(image: np.ndarray, geo_transform: affine.Affine, epsg: int, output_file_name: str):
+    """
+
+    :param image: image must be of the format h X w X bands
+    :param geo_transform:
+    :param epsg:
+    :param output_file_name:
+    :return:
+    """
+    save_multi_band(image, geo_transform, gdal.GDT_UInt16, epsg, output_file_name)
