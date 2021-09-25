@@ -17,7 +17,7 @@ A GIS utility library which contains some regularly required math and image oper
 - *_Fiona -  [installation](https://anaconda.org/conda-forge/fiona)_*
 - *_Shapely -  [installation](https://anaconda.org/conda-forge/shapely)_*
 
- ## Math Operations
+## Math Operations
  
 1. Get perpendicular point with reference to start and end point of the segment 
 2. Get perpendicular distance from point to line_segment
