@@ -26,7 +26,7 @@ A GIS utility library which contains some regularly required math and image oper
 5. Euclidean computation
 
 ## Image Operations
-- ### Save Multi Band Imagery
+### Save Multi Band Imagery
 ```python
 import numpy as np
 from affine import Affine
@@ -44,7 +44,7 @@ save_16bit_multi_band(image, transform, 26910, r"16bit.tiff")
 
 ```
 
-- ### Generate bitmap from shape file
+### Generate bitmap from shape file
 
 ![Animation](https://user-images.githubusercontent.com/24665570/132937989-0a77de62-2c55-4369-a155-35326b21c82d.gif)
 
@@ -63,7 +63,7 @@ for i, bitmap in enumerate(bitmap_gen):
     save_image_with_geo_transform(f"{i}.tiff", bitmap.array, bitmap.transform)
 ```
 
-- ### Generate shape geometry from geo reference bitmap
+### Generate shape geometry from geo reference bitmap
 
 ```python
 
