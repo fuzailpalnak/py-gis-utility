@@ -2,7 +2,7 @@
 
 A GIS utility library which contains some regularly required math and image operations.
 
-[![Downloads](https://static.pepy.tech/personalized-badge/py-gis-utility?period=month&units=international_system&left_color=yellowgreen&right_color=green&left_text=Downloads)](https://pepy.tech/project/py-gis-utility)
+[![Downloads](https://pepy.tech/badge/py-gis-utility)](https://pepy.tech/project/py-gis-utility)
 
 ## Installation
     
