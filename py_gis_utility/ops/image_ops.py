@@ -61,7 +61,7 @@ def image_to_collection_generator(
     for i, (s, v) in enumerate(
         shapes(
             image.astype(rasterio.uint8),
-            mask=None,
+            mask=(image > 0),
             connectivity=8,
             transform=transform,
         )
@@ -106,7 +106,13 @@ def copy_geo_reference_to_image(
     geo_referenced_image.close()
 
 
-def save_multi_band(image: np.ndarray, geo_transform: affine.Affine, gdal_unit, epsg: int, output_file_name: str):
+def save_multi_band(
+    image: np.ndarray,
+    geo_transform: affine.Affine,
+    gdal_unit,
+    epsg: int,
+    output_file_name: str,
+):
     """
 
     :param image: image must be of the format h X w X bands
@@ -119,7 +125,7 @@ def save_multi_band(image: np.ndarray, geo_transform: affine.Affine, gdal_unit, 
     assert image.ndim == 3, f"Expected to have 3 dim got {image.ndim}"
 
     x, y, z = image.shape
-    dst_ds = gdal.GetDriverByName('GTiff').Create(output_file_name, y, x, z, gdal_unit)
+    dst_ds = gdal.GetDriverByName("GTiff").Create(output_file_name, y, x, z, gdal_unit)
 
     dst_ds.SetGeoTransform(geo_transform)
     srs = osr.SpatialReference()
