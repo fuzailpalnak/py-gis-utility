@@ -16,7 +16,8 @@ from py_gis_utility.helper import (
 from py_gis_utility.ops.image_ops import (
     image_to_collection_generator,
     copy_geo_reference_to_image,
-    create_bitmap, save_multi_band,
+    create_bitmap,
+    save_multi_band,
 )
 
 
@@ -69,17 +70,25 @@ def image_path_to_shape_generator(image_path: str, **kwargs) -> Dict:
     )
 
 
-def copy_geo_reference(copy_from_path: str, copy_to_path: str, save_to: str):
+def copy_geo_reference(
+    copy_from_path: str, copy_to_path: str, save_to: str, is_binary: bool = True
+):
     """
 
+    :param is_binary:
     :param save_to:
     :param copy_from_path:
     :param copy_to_path:
     :return:
     """
+    destination_img = (
+        cv2.imread(copy_to_path, cv2.IMREAD_GRAYSCALE)
+        if is_binary
+        else cv2.cvtColor(cv2.imread(copy_to_path), cv2.COLOR_BGR2RGB)
+    )
     copy_geo_reference_to_image(
         read_image_with_geo_transform(copy_from_path),
-        cv2.cvtColor(cv2.imread(copy_to_path), cv2.COLOR_BGR2RGB),
+        destination_img,
         save_to,
     )
 
@@ -133,7 +142,9 @@ def shape_geometry_to_bitmap_from_shape_geometry_path_generator(
     )
 
 
-def save_8bit_multi_band(image: np.ndarray, geo_transform: affine.Affine, epsg: int, output_file_name: str):
+def save_8bit_multi_band(
+    image: np.ndarray, geo_transform: affine.Affine, epsg: int, output_file_name: str
+):
     """
 
     :param image: image must be of the format h X w X bands
@@ -145,7 +156,9 @@ def save_8bit_multi_band(image: np.ndarray, geo_transform: affine.Affine, epsg: 
     save_multi_band(image, geo_transform, gdal.GDT_Byte, epsg, output_file_name)
 
 
-def save_16bit_multi_band(image: np.ndarray, geo_transform: affine.Affine, epsg: int, output_file_name: str):
+def save_16bit_multi_band(
+    image: np.ndarray, geo_transform: affine.Affine, epsg: int, output_file_name: str
+):
     """
 
     :param image: image must be of the format h X w X bands
