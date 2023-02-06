@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, Union
 
 import affine
-import gdal
+from osgeo import gdal
 import osr
 import rasterio
 import numpy as np

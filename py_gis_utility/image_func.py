@@ -1,9 +1,8 @@
 import affine
 import cv2
-import gdal
 import numpy as np
 from typing import Dict, Union
-
+from osgeo import gdal
 from geopandas import GeoDataFrame
 from rasterio.io import BufferedDatasetWriter, DatasetWriter
 
