@@ -3,7 +3,7 @@ from typing import Dict, Union
 
 import affine
 from osgeo import gdal
-import osr
+from osgeo import osr
 import rasterio
 import numpy as np
 
