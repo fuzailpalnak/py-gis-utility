@@ -72,6 +72,30 @@ def image_to_collection_generator(
         }
 
 
+def get_geo_referenced_image_obj(
+    copy_from: Union[BufferedDatasetWriter, DatasetWriter], copy_to: np.ndarray
+):
+    """
+
+    :param copy_from:
+    :param copy_to:
+    :return:
+    """
+    bands = copy_to.ndim if copy_to.ndim > 2 else 1
+    geo_referenced_image = rasterio.open(
+        "",
+        mode="w",
+        driver=copy_from.driver,
+        width=copy_from.width,
+        height=copy_from.height,
+        crs=copy_from.crs,
+        transform=copy_from.transform,
+        dtype=copy_to.dtype,
+        count=bands,
+    )
+    return geo_referenced_image
+
+
 def copy_geo_reference_to_image(
     copy_from: Union[BufferedDatasetWriter, DatasetWriter],
     copy_to: np.ndarray,
