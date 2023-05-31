@@ -8,14 +8,13 @@ current_dir = os.path.abspath(os.path.dirname(__file__))
 try:
     with open(os.path.join(current_dir, "requirements.txt"), encoding="utf-8") as f:
         install_requires = f.read().split("\n")
-    install_requires.append('git+https://github.com/fuzailpalnak/stitchNsplit@numpy-requirement')
 except FileNotFoundError:
     install_requires = []
 
 
 setup(
     name="py-gis-utility",
-    version="0.2.1",
+    version="0.2.2",
     author="Fuzail Palnak",
     author_email="fuzailpalnak@gmail.com",
     url="https://github.com/fuzailpalnak/py-gis-utility",
