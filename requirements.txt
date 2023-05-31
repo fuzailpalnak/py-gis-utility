@@ -2,4 +2,3 @@ affine == 2.3.0
 numpy == 1.22.2
 opencv_python == 4.5.3.56
 scipy == 1.6.2
-git+https://github.com/fuzailpalnak/stitchNsplit@numpy-requirement
