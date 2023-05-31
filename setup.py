@@ -8,6 +8,7 @@ current_dir = os.path.abspath(os.path.dirname(__file__))
 try:
     with open(os.path.join(current_dir, "requirements.txt"), encoding="utf-8") as f:
         install_requires = f.read().split("\n")
+    install_requires.append('git+https://github.com/fuzailpalnak/stitchNsplit@numpy-requirement')
 except FileNotFoundError:
     install_requires = []
 
